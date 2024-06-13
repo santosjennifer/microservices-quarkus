@@ -1,0 +1,41 @@
+quarkus:
+  application:
+    name: pedido
+  http:
+    port: 8085
+  mongodb:
+    credentials:
+      username: pedido
+      password: pedido
+    hosts: 127.0.0.1:27027
+    database: admin
+  devservices:
+    enabled: false
+  elasticsearch:
+    hosts: localhost:9200
+    protocol: http
+  log:
+    handler:
+      gelf:
+        enabled: true
+  kafka:
+    health:
+      enabled: true
+  kafka:
+    bootstrap:
+      servers: localhost:9092
+mp:
+  messaging:
+    incoming:
+      pedidos:
+        connector: smallrye-kafka
+        value:
+          deserializer: com.github.ifood.deserializer.PedidoDeserializer
+        group:
+          id: ifood-pedidos
+        auto:
+          offset:
+            reset: earliest
+        bootstrap:
+          servers: localhost:9092
+        health-enabled: true
