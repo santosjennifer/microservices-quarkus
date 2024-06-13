@@ -1,0 +1,187 @@
+version: "3.8"
+services:
+  db-cadastro:
+    container_name: db_cadastro
+    image: postgres
+    environment:
+      POSTGRES_DB: cadastro
+      POSTGRES_USER: cadastro
+      POSTGRES_PASSWORD: cadastro
+    volumes:
+      - ./docker/postgres-cadastro:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    expose:
+      - 5433
+    networks:
+      - ifood-network
+  
+  db-marketplace:
+    container_name: db_marketplace
+    image: postgres
+    environment:
+      POSTGRES_DB: marketplace
+      POSTGRES_USER: marketplace
+      POSTGRES_PASSWORD: marketplace
+    volumes:
+      - ./docker/postgres-marketplace:/var/lib/postgresql/data
+    ports:
+      - 5434:5432
+    expose:
+      - 5434
+    networks:
+      - ifood-network
+      
+  db_pedido:
+    container_name: db_pedido
+    image: mongo
+    ports:
+      - "27027:27017"
+    environment: 
+      MONGO_INITDB_ROOT_USERNAME: pedido
+      MONGO_INITDB_ROOT_PASSWORD: pedido
+      MONGO_INITDB_DATABASE: pedido
+    volumes:
+      - ./docker/mongodb-pedido:/data/db
+    networks:
+      - ifood-network
+
+  artemis_ifood:
+    container_name: artemis_ifood
+    image: apache/activemq-artemis
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+      - "5672:5672"
+    networks:
+      - ifood-network
+
+  jaeger_ifood:
+    container_name: jaeger_ifood
+    image: jaegertracing/all-in-one
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "14250:14250"
+      - "9411:9411"      
+    networks:
+      - ifood-network
+      
+  keycloak:
+    container_name: keycloak_ifood
+    image: quay.io/keycloak/keycloak:24.0.2
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./docker/keycloak/:/opt/keycloak/data/import/
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    networks:
+      - ifood-network
+      
+  prometheus_ifood:
+    container_name: prometheus_ifood
+    image: prom/prometheus
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    networks:
+      - ifood-network
+    
+  grafana_ifood:
+    container_name: grafana_ifood
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    depends_on:
+      - prometheus_ifood
+    networks:
+      - ifood-network
+      
+  zookeeper:
+    container_name: zookeeper_ifood
+    image: confluentinc/cp-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - ifood-network
+      
+  kafka:
+    container_name: kafka_ifood
+    image: confluentinc/cp-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - ifood-network
+      
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - ./docker/elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - ifood-network
+      
+  kibana:
+    container_name: kibana_ifood
+    image: docker.elastic.co/kibana/kibana:7.4.0
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+    networks:
+      - ifood-network
+      
+  logstash:
+    container_name: logstash_ifood
+    image: docker.io/elastic/logstash:7.16.3
+    volumes:
+      - source: ./docker/pipelines
+        target: /usr/share/logstash/pipeline
+        type: bind
+    ports:
+      - "12201:12201/udp"
+      - "5044:5044"  
+    depends_on:
+      - elasticsearch
+    networks:
+      - ifood-network
+      
+networks:
+  ifood-network:
+    driver: bridge
