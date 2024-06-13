@@ -25,13 +25,20 @@ public class AdicionarRestauranteDto implements Dto {
     @Override
     public boolean isValid(ConstraintValidatorContext context) {
         context.disableDefaultConstraintViolation();
-        if(Restaurante.find("cnpj", cnpj).count() > 0){
+        
+        String replaceCnpj = replaceCnpj();
+        
+        if(Restaurante.find("cnpj", replaceCnpj).count() > 0){
             context.buildConstraintViolationWithTemplate("Já existe registro para esse CNPJ.")
                     .addPropertyNode("cpnj")
                     .addConstraintViolation();
             return false;
         }
         return true;
+    }
+    
+    public String replaceCnpj() {
+        return cnpj != null ? cnpj.replaceAll("\\x2E|\\x2F|\\x2D", "") : null;
     }
     
 }

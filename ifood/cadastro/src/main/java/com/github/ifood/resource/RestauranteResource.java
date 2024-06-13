@@ -89,10 +89,13 @@ public class RestauranteResource {
 			@APIResponse(responseCode = "400", description = "Erro ao cadastrar restaurante", content = @Content(schema = @Schema(allOf = ConstraintViolationResponse.class)))
 	})
 	public Response adicionarRestaurante(@Valid AdicionarRestauranteDto dto) {
+		dto.cnpj = dto.replaceCnpj();
 		Restaurante restaurante = restauranteMapper.toRestaurante(dto);
 		restaurante.proprietario = jwtSubProprietario;
 		restaurante.persist();
+	
 		restauranteEmitter.send(restaurante);
+		
 		return Response.status(Response.Status.CREATED).build();
 	}
 

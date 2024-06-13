@@ -8,6 +8,7 @@
 *.jar
 *.war
 *.ear
+*.factorypath
 
 # Gradle temporary files #
 target/

@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: cadastro
       POSTGRES_PASSWORD: cadastro
     volumes:
-      - ./docker/postgres-cadastro:/var/lib/postgresql/data
+      - ./postgres-cadastro:/var/lib/postgresql/data
     ports:
       - 5433:5432
     expose:
@@ -24,7 +24,7 @@ services:
       POSTGRES_USER: marketplace
       POSTGRES_PASSWORD: marketplace
     volumes:
-      - ./docker/postgres-marketplace:/var/lib/postgresql/data
+      - ./postgres-marketplace:/var/lib/postgresql/data
     ports:
       - 5434:5432
     expose:
@@ -42,11 +42,11 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: pedido
       MONGO_INITDB_DATABASE: pedido
     volumes:
-      - ./docker/mongodb-pedido:/data/db
+      - ./mongodb-pedido:/data/db
     networks:
       - ifood-network
 
-  artemis_ifood:
+  artemis:
     container_name: artemis_ifood
     image: apache/activemq-artemis
     ports:
@@ -56,7 +56,7 @@ services:
     networks:
       - ifood-network
 
-  jaeger_ifood:
+  jaeger:
     container_name: jaeger_ifood
     image: jaegertracing/all-in-one
     ports:
@@ -77,7 +77,7 @@ services:
     ports:
       - "8081:8080"
     volumes:
-      - ./docker/keycloak/:/opt/keycloak/data/import/
+      - ./keycloak/:/opt/keycloak/data/import/
     command:
       - start-dev
       - --import-realm
@@ -87,23 +87,23 @@ services:
     networks:
       - ifood-network
       
-  prometheus_ifood:
+  prometheus:
     container_name: prometheus_ifood
     image: prom/prometheus
     volumes:
-      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - 9090:9090
     networks:
       - ifood-network
     
-  grafana_ifood:
+  grafana:
     container_name: grafana_ifood
     image: grafana/grafana
     ports:
       - 3000:3000
     depends_on:
-      - prometheus_ifood
+      - prometheus
     networks:
       - ifood-network
       
@@ -149,7 +149,7 @@ services:
     cap_add:
       - IPC_LOCK
     volumes:
-      - ./docker/elasticsearch-data:/usr/share/elasticsearch/data
+      - ./elasticsearch-data:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
     networks:
@@ -171,7 +171,7 @@ services:
     container_name: logstash_ifood
     image: docker.io/elastic/logstash:7.16.3
     volumes:
-      - source: ./docker/pipelines
+      - source: ./pipelines
         target: /usr/share/logstash/pipeline
         type: bind
     ports:

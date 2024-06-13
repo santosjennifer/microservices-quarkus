@@ -30,7 +30,7 @@ quarkus:
 amqp-host: localhost
 amqp-port: 5672
 amqp-username: artemis
-amqp-password: admin
+amqp-password: artemis
 
 mp:
   messaging:
@@ -42,4 +42,4 @@ mp:
   jwt:
     verify:
       issuer: http://localhost:8081/realms/ifood
-      publickey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwnxvfHnoKJCk7RvWKDwpcbJTkWl2NXux7j+gx8cJyV4y9R9dwBMAh+d6NCIe+752B5jpS2gZcU3YwahFS9An6UizGLmghC07WY3i9mrWCjVkmGaumIbgX7j+TUKi1NdGye5mvHeuLT2xvjn+gDZpxd7udSG1QaocXLs9B9CIauuWkRg35KheDJykLAILXk1xcURmU+i55E7xUOadg3b5Qxo8WbDY8MuNQ1GdHis7gv4BPB1l6wwSDwn3gCoRyVkMpKOrznzFv1vaOZcSGHsmCk3dGanfqvM61nNkhFqRRuP2NafHecYjCIDynTfShUqlR3A/doixXpW7QHafYvEPrwIDAQAB
+      publickey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsPpG36RUAOrfcOmT1xM9wJ20NjKNto/SRHAEH59unW2/jZVpbdHjSZ31sdC8MLt0PkRWu89yaH5WqQ8II0UwjRVv51zNJRC8IEgnzDYskS794VhyBZ84yc+AGxiEbH8zTP749qjzKGorjX/MR0WibVmr5o9L3+AHcHetWwwVENxNAHycxB3pPVbVy5LBGb5eDzEY1TDf8WvpnS9uTpNEKr6VjE/CpmfnuonJB9BhSniIywo2fpCn8k8wMY6dLgCN5n5XsGd8i1ZovMamv1YIYjeiiTcoqVaq3/mVMKDP2176zj8jC61zUtgHdsvKD9U4F9w40MrQN+eY0FN+knoTIwIDAQAB

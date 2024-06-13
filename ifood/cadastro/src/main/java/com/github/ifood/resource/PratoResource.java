@@ -90,15 +90,14 @@ public class PratoResource {
 	@Transactional
 	@Tag(name = "Prato")
 	@Path("/{idRestaurante}/prato/{idPrato}")
-	public void atualizarPrato(@PathParam("idRestaurante") Long idRestaurante, @PathParam("idPrato") Long idPrato,
-			AtualizarPratoDto dto) {
+	public void atualizarPrato(@PathParam("idRestaurante") Long idRestaurante, @PathParam("idPrato") Long idPrato, AtualizarPratoDto dto) {
 		validaRestaurante(idRestaurante);
 
-		Optional<Prato> opPrato = Prato.findByIdOptional(idPrato);
-		if (opPrato.isEmpty())
-			throw new NotFoundException();
+		Optional<Prato> prato = Prato.findByIdOptional(idPrato);
+		if (prato.isEmpty())
+			throw new NotFoundException("Prato não encontrado");
 
-		Prato manager = opPrato.get();
+		Prato manager = prato.get();
 		this.pratoMapper.toPrato(dto, manager);
 
 		manager.persist();
@@ -110,9 +109,9 @@ public class PratoResource {
 	@Path("{idRestaurante}/prato/{id}")
 	public void excluirPrato(@PathParam("idRestaurante") Long idRestaurante, @PathParam("id") Long idPrato) {
 		validaRestaurante(idRestaurante);
-		Optional<Prato> opPrato = Prato.findByIdOptional(idPrato);
-		opPrato.ifPresentOrElse(Prato::delete, () -> {
-			throw new NotFoundException();
+		Optional<Prato> prato = Prato.findByIdOptional(idPrato);
+		prato.ifPresentOrElse(Prato::delete, () -> {
+			throw new NotFoundException("Prato não encontrado");
 		});
 	}
 }

@@ -1,16 +1,19 @@
 package com.github.ifood.provider;
 
-import jakarta.ws.rs.ClientErrorException;
+import com.github.ifood.exception.CustomClientErrorException;
+
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
 @Provider
-public class ClientErrorExceptionMapper implements ExceptionMapper<ClientErrorException> {
+public class ClientErrorExceptionMapper implements ExceptionMapper<CustomClientErrorException> {
 
-	@Override
-	public Response toResponse(ClientErrorException exception) {
-		return Response.status(Response.Status.FORBIDDEN).entity(exception.getMessage()).build();
-	}
+    @Override
+    public Response toResponse(CustomClientErrorException exception) {
+        return Response.status(exception.getResponse().getStatus())
+                       .entity(exception.getMessage())
+                       .build();
+    }
 
 }
