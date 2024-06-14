@@ -6,6 +6,7 @@ API que registra os pedidos recebidos do marketplace.
 - MongoDB
 - Kafka
 - ElasticSearch
+- Logstash
 - Kibana
 
 ### Iniciando a aplicação:
