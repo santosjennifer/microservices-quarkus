@@ -15,9 +15,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
-public class ElastichSearchService {
+public class ElasticSearchService {
 
-	private static final Logger LOG = Logger.getLogger(ElastichSearchService.class);
+	private static final Logger LOG = Logger.getLogger(ElasticSearchService.class);
 
 	@Inject
 	RestClient restClient;
@@ -33,12 +33,12 @@ public class ElastichSearchService {
 		return new ResponseListener() {
 			@Override
 			public void onSuccess(Response response) {
-				LOG.info("Sucesso ao enviar dados para o Elastich Search");
+				LOG.info("Sucesso ao enviar dados para o Elastic Search");
 			}
 
 			@Override
 			public void onFailure(Exception e) {
-				LOG.error("Erro ao enviar dados para o Elastich Search: " + e.getMessage(), e.getCause());
+				LOG.error("Erro ao enviar dados para o Elastic Search: " + e.getMessage(), e.getCause());
 			}
 		};
 	}

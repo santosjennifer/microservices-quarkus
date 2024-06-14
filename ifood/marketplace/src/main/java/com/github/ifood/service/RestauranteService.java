@@ -25,12 +25,12 @@ public class RestauranteService {
 
 	        return Panache.withTransaction(() -> restaurante.persist().replaceWith(restaurante))
 	                      .onItem().invoke(persistedRestaurante -> 
-	                          LOG.info("Restaurante persistido com sucesso")
+	                          LOG.info("Restaurante salvo com sucesso")
 	                      ).onFailure().invoke(e -> 
-	                          LOG.error("Falha ao persitir restaurante: ", e)
+	                          LOG.error("Falha ao salvar restaurante: ", e)
 	                      );
 	    } catch (Exception e) {
-	        LOG.error("Exceção ao persistir restaurante na base: ", e);
+	        LOG.error("Exceção ao salvar restaurante na base: ", e);
 	        return Uni.createFrom().failure(e);
 	    }
 	}

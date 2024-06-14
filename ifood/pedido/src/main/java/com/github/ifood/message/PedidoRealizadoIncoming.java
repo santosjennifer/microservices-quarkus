@@ -11,7 +11,7 @@ import com.github.ifood.dto.RestauranteDto;
 import com.github.ifood.model.Pedido;
 import com.github.ifood.model.Prato;
 import com.github.ifood.model.Restaurante;
-import com.github.ifood.service.ElastichSearchService;
+import com.github.ifood.service.ElasticSearchService;
 
 import jakarta.inject.Inject;
 
@@ -20,7 +20,7 @@ public class PedidoRealizadoIncoming {
 	private static final Logger LOG = Logger.getLogger(PedidoRealizadoIncoming.class);
 	
     @Inject
-    ElastichSearchService elastichSearchService;
+    ElasticSearchService elasticSearchService;
 
 	@Incoming("pedidos")
 	public void lerPedidos(PedidoRealizadoDto pedidoRealizado) {
@@ -39,7 +39,7 @@ public class PedidoRealizadoIncoming {
                 prato.restaurante = restaurante;
             }
 			
-			elastichSearchService.index(pedidoRealizado);
+            elasticSearchService.index(pedidoRealizado);
 			
 			pedido.persist();
 			LOG.info("Pedido salvo: " + pedido.id);
